@@ -42,9 +42,9 @@ export default function EnhancedTableHead(props: EnhancedTableProps) {
               // onClick={createSortHandler(headCell.id)}
               // sx={{display:"flex",flexDirection:"column"}}
             >
-              <Typography sx={{display:"flex",flexDirection:"column"}} >
+              <Typography sx={{display:"flex",flexDirection:"column",width:"max-content"}} >
               {headCell.label}
-              <input type='text' placeholder='search..' style={{width:"150px"}} />
+              {headCell.input && <input type='text' placeholder='search..' style={{width:"150px"}} />}
               </Typography>
               {/* {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>

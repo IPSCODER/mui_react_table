@@ -118,7 +118,7 @@ export default function UITable({rows,headCells}:UITableProps) {
       tabIndex={-1}
       key={row.id}
       selected={isItemSelected}
-      sx={{ cursor: 'pointer' }}
+      sx={{verticalAlign:"top !important",cursor: 'pointer'}}
     >
       <TableCell padding="checkbox" 
       onClick={(event) => handleClick(event, row.id)}
@@ -136,7 +136,7 @@ export default function UITable({rows,headCells}:UITableProps) {
       {Object.keys(row).map((key) => {
         if (key === 'id') return null; // Skip the 'id' field
         return (
-          <TableCell key={key} align="right">
+          <TableCell key={key} align="right"  >
             {key === 'name' ? row[key] : row[key].toString()}
           </TableCell>
         );
