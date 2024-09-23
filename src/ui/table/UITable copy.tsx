@@ -60,15 +60,18 @@ const rows = [
   createData(13, 'Oreo', 437, 18.0, 63, 4.0),
 ];
 
+
 interface EnhancedTableProps {
   numSelected: number;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearch: (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
   rowCount: number;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { onSelectAllClick, numSelected, rowCount, onSearch } = props;
+
+
 
   return (
     <TableHead>
@@ -82,36 +85,61 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             inputProps={{ 'aria-label': 'select all desserts' }}
           />
         </TableCell>
-        <TableCell align="left">
-          <Typography>
-            Dessert (100g serving)
-            <input type="text" placeholder="Search..." onChange={onSearch('name')} style={{ margin: '0px', padding: '4px', width: '200px' }} />
-          </Typography>
-        </TableCell>
-        <TableCell align="right">
-          <Typography>
-            Calories
-            <input type="text" placeholder="Search..." onChange={onSearch('calories')} style={{ margin: '0px', padding: '4px', width: '200px' }} />
-          </Typography>
-        </TableCell>
-        <TableCell align="right">
-          <Typography>
-            Fat (g)
-            <input type="text" placeholder="Search..." onChange={onSearch('fat')} style={{ margin: '0px', padding: '4px', width: '200px' }} />
-          </Typography>
-        </TableCell>
-        <TableCell align="right">
-          <Typography>
-            Carbs (g)
-            <input type="text" placeholder="Search..." onChange={onSearch('carbs')} style={{ margin: '0px', padding: '4px', width: '200px' }} />
-          </Typography>
-        </TableCell>
-        <TableCell align="right">
-          <Typography>
-            Protein (g)
-            <input type="text" placeholder="Search..." onChange={onSearch('protein')} style={{ margin: '0px', padding: '4px', width: '200px' }} />
-          </Typography>
-        </TableCell>
+        {/* {headCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+          >
+            <TableSortLabel>
+              <Typography>
+                {headCell.label}
+                <input type="text" placeholder="Search..." onChange={onSearch} style={{ margin: '0px', padding: '4px', width: '200px' }} />
+              </Typography>
+            </TableSortLabel>
+          </TableCell>
+        ))} */}
+        <TableCell
+            align={'left' }
+          >
+              <Typography>
+                Dessert(100g serving)
+                <input type="text" placeholder="Search..." onChange={onSearch} style={{ margin: '0px', padding: '4px', width: '200px' }} />
+              </Typography>
+          </TableCell>
+          <TableCell
+            align={'right' }
+          >
+              <Typography>
+                Calories
+                <input type="text" placeholder="Search..." onChange={onSearch} style={{ margin: '0px', padding: '4px', width: '200px' }} />
+              </Typography>
+          </TableCell>
+          <TableCell
+            align={'right' }
+          >
+              <Typography>
+                Fat (g)
+                <input type="text" placeholder="Search..." onChange={onSearch} style={{ margin: '0px', padding: '4px', width: '200px' }} />
+              </Typography>
+          </TableCell>
+          <TableCell
+            align={'right' }
+          >
+              <Typography>
+                Carbs (g)
+                <input type="text" placeholder="Search..." onChange={onSearch} style={{ margin: '0px', padding: '4px', width: '200px' }} />
+              </Typography>
+          </TableCell>
+          <TableCell
+            align={'right' }
+          >
+              <Typography>
+                Protein (g)
+                <input type="text" placeholder="Search..." onChange={onSearch} style={{ margin: '0px', padding: '4px', width: '200px' }} />
+              </Typography>
+          </TableCell>
+          
       </TableRow>
     </TableHead>
   );
@@ -176,15 +204,11 @@ export default function UITable() {
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [searchValues, setSearchValues] = React.useState<{ [key: string]: string }>({
-    name: '',
-    calories: '',
-    fat: '',
-    carbs: '',
-    protein: '',
-  });
+  const [searchTerm, setSearchTerm] = React.useState('');
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+
+  const handleSelectAllClick = (event:any) => {
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.id);
       setSelected(newSelected);
@@ -193,18 +217,16 @@ export default function UITable() {
     setSelected([]);
   };
 
-  const handleSearch = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValues((prev) => ({ ...prev, [field]: event.target.value.toLowerCase() }));
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value.toLowerCase());
   };
 
   const visibleRows = React.useMemo(
     () =>
-      rows.filter((row) =>
-        Object.keys(searchValues).every((key) =>
-          row[key as keyof Data].toString().toLowerCase().includes(searchValues[key])
-        )
-      ).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [searchValues, page, rowsPerPage],
+      rows
+        .filter((row) => row.name.toLowerCase().includes(searchTerm)) // Filter based on search term
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [ page, rowsPerPage, searchTerm], // Add searchTerm to dependencies
   );
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -215,6 +237,8 @@ export default function UITable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -247,7 +271,7 @@ export default function UITable() {
                     sx={{ cursor: 'pointer' }}
                   >
                     <TableCell padding="checkbox" 
-                      onClick={(event:any) => handleSelectAllClick(event)}
+                    onClick={(event) => handleSelectAllClick(event)}
                     >
                       <Checkbox
                         color="primary"
@@ -285,6 +309,7 @@ export default function UITable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+    
     </Box>
   );
 }
