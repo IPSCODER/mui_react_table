@@ -1,8 +1,17 @@
+import { Outlet } from 'react-router-dom'
+import Footer from '../comman/footer/Footer'
+import Header from '../comman/header/Header'
 import React from 'react'
 
 const Theme = () => {
   return (
-    <div>Theme</div>
+    <>
+    <Header/>
+    <main>
+      <Outlet/>
+    </main>
+    <Footer/>
+    </>
   )
 }
 
